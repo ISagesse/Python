@@ -1,7 +1,7 @@
 class HashMap:
     def __init__(self, array_size):
         self.array_size = array_size
-        self.array = [None for item in range(array_size)]
+        self.array = [[] for item in range(array_size)]
 
     def hash(self, key):
         hash_code = 0
@@ -14,13 +14,28 @@ class HashMap:
 
     def assign(self, key, value):
         array_index = self.compressor(self.hash(key))
-        self.array[array_index] = value
+        #implement collision with chaining methods
+        found = False
+        for idx, ele in enumerate(self.array[array_index]):
+            if len(ele) == 2 and ele[0] == key:
+                # checking to see if the user was trying to update that key current value, if so update it.
+                self.array[array_index][idx] = (key, value)
+                found = True
+                break
+
+        if found == False:
+            # adding that key and value to that location in the array.
+            self.array[array_index].append((key, value))
 
     def retrieve(self, key):
         array_index = self.compressor(self.hash(key))
-        return self.array[array_index]
+        for element in self.array[array_index]:
+            if element[0] == key:
+                return element[1]
 
     def remove(self, key):
         array_index = self.compressor(self.hash(key))
-        self.array[array_index] = None
+        for idx, element in enumerate(self.array[array_index]):
+            if element[0] == key:
+                del self.array[array_index][idx]
 
